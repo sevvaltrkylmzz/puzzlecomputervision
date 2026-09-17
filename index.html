@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fotoğraf Bulmaca Oyunu</title>
+    <meta name="description" content="Webcam ile fotoğrafını çek, bulmaca parçalarını birleştir ve sürenle yarış!">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ===== LANDING SCREEN ===== -->
+    <div id="screen-landing" class="screen active">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+        <div class="card landing-card">
+            <div class="logo-wrapper">
+                <span class="logo-icon">🧩</span>
+            </div>
+            <h1>Fotoğraf Bulmaca</h1>
+            <p class="subtitle">Fotoğrafını çek, parçaları birleştir, sürenle yarış!</p>
+
+            <div class="difficulty-section">
+                <h3>Zorluk Seviyesi</h3>
+                <div class="difficulty-options" id="difficulty-options">
+                    <button class="diff-btn" data-size="3" id="diff-easy">
+                        <span class="diff-icon">😊</span>
+                        <span class="diff-label">Kolay</span>
+                        <span class="diff-detail">3×3</span>
+                    </button>
+                    <button class="diff-btn active" data-size="4" id="diff-medium">
+                        <span class="diff-icon">🤔</span>
+                        <span class="diff-label">Orta</span>
+                        <span class="diff-detail">4×4</span>
+                    </button>
+                    <button class="diff-btn" data-size="5" id="diff-hard">
+                        <span class="diff-icon">🔥</span>
+                        <span class="diff-label">Zor</span>
+                        <span class="diff-detail">5×5</span>
+                    </button>
+                </div>
+            </div>
+
+            <button id="btn-start" class="btn-primary">
+                <span>Başla</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== CAMERA SCREEN ===== -->
+    <div id="screen-camera" class="screen">
+        <div class="camera-wrapper">
+            <h2 class="camera-title">📸 Fotoğrafını Çek</h2>
+            <div class="camera-container">
+                <video id="webcam" autoplay playsinline></video>
+                <div class="camera-frame"></div>
+                <div id="countdown-overlay" class="countdown-overlay hidden">
+                    <span id="countdown-number"></span>
+                </div>
+                <div id="flash-overlay" class="flash-overlay"></div>
+            </div>
+            <p class="camera-hint">Kendini çerçeveye yerleştir ve butona bas!</p>
+            <button id="btn-capture" class="btn-primary btn-capture">
+                <span class="capture-circle"></span>
+                <span>Fotoğraf Çek</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== PUZZLE SCREEN ===== -->
+    <div id="screen-puzzle" class="screen">
+        <div class="puzzle-header">
+            <div class="stat-box timer-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <span id="timer-display">00:00</span>
+            </div>
+            <h2 class="puzzle-title">Bulmacayı Çöz!</h2>
+            <div class="stat-box moves-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+                    <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+                </svg>
+                <span id="moves-display">0</span>
+            </div>
+        </div>
+
+        <div class="puzzle-area">
+            <div class="puzzle-grid-wrapper">
+                <div id="puzzle-grid" class="puzzle-grid"></div>
+            </div>
+            <div class="reference-section">
+                <h3>📷 Orijinal</h3>
+                <canvas id="reference-image"></canvas>
+                <p class="reference-hint">Bu fotoğrafı oluşturmaya çalış!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CONGRATS SCREEN ===== -->
+    <div id="screen-congrats" class="screen">
+        <div class="card congrats-card">
+            <div class="congrats-emoji">🎉</div>
+            <h1>Tebrikler!</h1>
+            <p class="congrats-message">Bulmacayı başarıyla tamamladın!</p>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <span class="stat-icon">⏱️</span>
+                    <span class="stat-label">Süren</span>
+                    <span id="final-time" class="stat-value">00:00</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🔄</span>
+                    <span class="stat-label">Hamle</span>
+                    <span id="final-moves" class="stat-value">0</span>
+                </div>
+            </div>
+
+            <canvas id="completed-image" class="completed-image"></canvas>
+
+            <button id="btn-replay" class="btn-primary">
+                <span>🔁 Tekrar Oyna</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Hidden capture canvas -->
+    <canvas id="capture-canvas" style="display:none;"></canvas>
+
+    <!-- Confetti container -->
+    <div id="confetti-container" class="confetti-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
